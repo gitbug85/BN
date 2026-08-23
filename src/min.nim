@@ -1,9 +1,9 @@
 import std/parseopt
+import compile
 
 var p = initOptParser()
 
 var command = ""
-var target = ""
 var path = ""
 
 while true:
@@ -19,20 +19,15 @@ while true:
   of cmdArgument:
     if command == "":
       command = p.key
-    elif command == "c" and target == "":
-      target = p.key
     elif command == "c" and path == "":
       path = p.key
     else:
       quit("Unexpected argument: " & p.key, 1)
 
 if command == "c":
-  if target notin ["bin", "py", "nim"]:
-    quit("Invalid compile target: " & target, 1)
-
   if path == "":
-    quit("Missing path", 1)
+    quit("Usage: myprogram c <path>", 1)
 
-  echo "Compiling ", path, " -> ", target
+  echo "Compiling: ", path
 else:
   quit("Unknown command: " & command, 1)
