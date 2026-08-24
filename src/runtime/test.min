@@ -1,0 +1,4 @@
+x IS ARGS 0
+y IS ARGS 1
+z IS "awesome"
+PRINT z

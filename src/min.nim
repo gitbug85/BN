@@ -33,5 +33,7 @@ if command == "c":
     quit "File not found!"
 
   var tokens: seq[Token] = tokenize(path)
+  for tok in tokens:
+    echo tok.kind
 else:
   quit("Unknown command: " & command, 1)
