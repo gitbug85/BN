@@ -1,5 +1,6 @@
 import std/parseopt
-import compile
+import tokens
+import std/os
 
 var p = initOptParser()
 
@@ -28,6 +29,9 @@ if command == "c":
   if path == "":
     quit("Usage: myprogram c <path>", 1)
 
-  echo "Compiling: ", path
+  if not fileExists(path):
+    quit "File not found!"
+
+  var tokens: seq[Token] = tokenize(path)
 else:
   quit("Unknown command: " & command, 1)
