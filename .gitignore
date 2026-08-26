@@ -2,3 +2,5 @@ nimcache/
 nimblecache/
 htmldocs/
 src/min
+*.o
+*.a

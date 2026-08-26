@@ -1,6 +1,7 @@
 import std/parseopt
 import tokens
 import std/os
+# import transpile
 
 var p = initOptParser()
 
@@ -35,5 +36,7 @@ if command == "c":
   var tokens: seq[Token] = tokenize(path)
   for tok in tokens:
     echo tok.kind
+  # transpile(tokens)
+
 else:
   quit("Unknown command: " & command, 1)

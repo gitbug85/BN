@@ -1,5 +1,5 @@
 I find both Nim and Rust to have features I like but some downsides.
-I will start from very basic syntax and the language from there.
+I will start from very basic syntax and the build the language from there.
 
 Things I like from different programming languages that I want to implement:
 - Nim: Small join paths operator
