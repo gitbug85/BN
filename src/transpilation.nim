@@ -17,7 +17,7 @@ proc expect_identifier(tokens: var seq[Token], content: var string) =
   var cur = tokens[0]
   if cur.kind != "IDENTIFIER":
     quit(fmt"Error: Expected identifer found {cur.value}")
-  content.add(&"\n{cur.value} ")
+  content.add(&"\nvar {cur.value} ")
   tokens.delete(0)
 
 proc expect_is(tokens: var seq[Token], content: var string) =
@@ -27,11 +27,15 @@ proc expect_is(tokens: var seq[Token], content: var string) =
   content.add(fmt"= ")
   tokens.delete(0)
 
-proc expect_number(tokens: var seq[Token], content: var string) =
+proc expect_value(tokens: var seq[Token], content: var string) =
   var cur = tokens[0]
-  if cur.kind != "NUMBER":
-    quit(fmt"Error: Expected NUMBER found {cur.value}")
-  content.add(fmt"{cur.value}")
+  if cur.kind == "NUMBER":
+    content.add(fmt"{cur.value}")
+  elif cur.kind == "STRING":
+    content.add(&"{cur.value}")
+  else:
+    quit(fmt"Error: Expected value found {cur.value}")
+
   tokens.delete(0)
 
 proc transpile*(tokens: var seq[Token]): string =
@@ -46,6 +50,6 @@ proc transpile*(tokens: var seq[Token]): string =
       break
     expect_identifier(tokens, content)
     expect_is(tokens, content)
-    expect_number(tokens, content)
+    expect_value(tokens, content)
 
   content

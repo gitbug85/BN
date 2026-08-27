@@ -2,6 +2,8 @@ import std/parseopt
 import tokens
 import std/os
 import transpilation
+import std/strformat
+import osproc
 
 var p = initOptParser()
 
@@ -43,6 +45,9 @@ if command == "c":
   let basename = stem & ".nim"
   let full_path = parent / basename
   writeFile(full_path, content)
+  let output = execProcess(fmt"nim c {full_path}")
+  echo "Output: ", output
+  removeFile(full_path)
 
 else:
   quit("Unknown command: " & command, 1)
