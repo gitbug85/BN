@@ -1,7 +1,7 @@
 import std/parseopt
 import tokens
 import std/os
-# import transpile
+import transpilation
 
 var p = initOptParser()
 
@@ -36,7 +36,13 @@ if command == "c":
   var tokens: seq[Token] = tokenize(path)
   for tok in tokens:
     echo tok.kind
-  # transpile(tokens)
+  var content = transpile(tokens)
+  echo content
+  let parent = parentDir(path)
+  let (_, stem, _) = splitFile(path)
+  let basename = stem & ".nim"
+  let full_path = parent / basename
+  writeFile(full_path, content)
 
 else:
   quit("Unknown command: " & command, 1)
