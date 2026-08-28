@@ -1,3 +1,8 @@
+# TODO
+- Make reassignment take into account mutability
+
+# Stratagy
+
 I find both Nim and Rust to have features I like but some downsides.
 I will start from very basic syntax and the build the language from there.
 
