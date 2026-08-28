@@ -1,4 +1,9 @@
 
-z IS 3
-f IS 4
-greeting IS "HelloWorld!"
+# mut z = 3
+# mut f = 4
+# mut hello = "Yello"
+# mut world = "world!"
+# hello = "H" + hello[1..]
+# mut greeting = hello + " " + world
+mut greeting = "HelloWorld!"
+echo greeting

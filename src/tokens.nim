@@ -15,12 +15,21 @@ proc isNumber(s: string): bool =
   except ValueError:
     return false
 
+proc removeAfter(s: string, sub: char): string =
+  let idx = s.find(sub)
+  if idx == 0:
+    return ""
+  elif idx > 0:
+    return s[0 .. idx-1]
+  return s
+
 proc tokenize*(path: string): seq[Token] =
   let content = readFile(path)
-  let allLines: seq[string] = content.splitLines()
-  let separators = {'=', '(', ')', ' '}
+  var allLines: seq[string] = content.splitLines()
+  let separators = {' '}
 
-  for line in allLines:
+  for line in allLines.mitems:
+    line = removeAfter(line, '#')
     var lexemes: seq[string] = line.split(separators)
 
     for lexeme in lexemes:
@@ -30,10 +39,12 @@ proc tokenize*(path: string): seq[Token] =
       case lexeme
       of "ARGS":
         result.add(Token(kind: "ARGS", value: lexeme))
-      of "IS":
-        result.add(Token(kind: "IS", value: lexeme))
-      of "PRINT":
-        result.add(Token(kind: "PRINT", value: lexeme))
+      of "=":
+        result.add(Token(kind: "EQUAL", value: lexeme))
+      of "echo":
+        result.add(Token(kind: "ECHO", value: lexeme))
+      of "mut":
+        result.add(Token(kind: "MUTABLE", value: lexeme))
       else:
         if isNumber(lexeme):
           result.add(Token(kind: "NUMBER", value: lexeme))
