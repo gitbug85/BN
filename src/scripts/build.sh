@@ -1,2 +1,2 @@
-nim c ../min.nim
-../min c ../runtime/test.min
+nim c ../bn.nim
+../min c ../runtime/test.bn

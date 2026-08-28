@@ -1,6 +1,6 @@
 nimcache/
 nimblecache/
 htmldocs/
-src/min
+src/bn
 *.o
 *.a

@@ -35,6 +35,10 @@ if command == "c":
   if not fileExists(path):
     quit "File not found!"
 
+  let fileInfo = splitFile(path)
+  if not (fileInfo.ext == ".bn"):
+    quit "Incorrect file extension!"
+
   var tokens: seq[Token] = tokenize(path)
   for tok in tokens:
     echo tok.kind

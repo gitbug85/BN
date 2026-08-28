@@ -1,3 +1,3 @@
-# Min
+# Borrow Nim
 
-Compile min.nim for a compiler executable.
+Compile bn.nim for a compiler executable.
