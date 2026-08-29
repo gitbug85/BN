@@ -4,7 +4,7 @@ import tables
 
 type
   Transpiler = object
-    scope: Table[string, string] # Identifier to mutability
+    scope: Table[string, bool] # Identifier to mutability
     content: string
 
 proc remove_newlines(tokens: var seq[Token]): int =
@@ -19,54 +19,62 @@ proc remove_newlines(tokens: var seq[Token]): int =
       newlines_removed = true
   return count
 
-proc expect_value(tokens: var seq[Token], content: var string) =
+proc expect_value(tp: var Transpiler, tokens: var seq[Token]) =
   var cur = tokens[0]
   if cur.kind == "NUMBER":
-    content.add(fmt"{cur.value}")
+    tp.content.add(fmt"{cur.value}")
   elif cur.kind == "STRING":
-    content.add(&"{cur.value}")
+    tp.content.add(&"{cur.value}")
   elif cur.kind == "IDENTIFIER":
-    content.add(cur.value)
+    tp.content.add(cur.value)
     tokens.delete(0)
   else:
     quit(fmt"Error: Expected value found {cur.value}")
 
   tokens.delete(0)
 
-proc expect_equal(tokens: var seq[Token], content: var string) =
+proc expect_equal(tp: var Transpiler, tokens: var seq[Token]) =
   var cur = tokens[0]
   if cur.kind != "EQUAL":
     quit(fmt"Error: Expected EQUAL found {cur.value}")
-  content.add(fmt"= ")
+  tp.content.add(fmt"= ")
   tokens.delete(0)
-  expect_value(tokens, content)
 
-proc expect_identifier(tokens: var seq[Token], content: var string) =
+proc expect_assignment(tp: var Transpiler, tokens: var seq[Token], mutable: bool) =
   var cur = tokens[0]
   if cur.kind != "IDENTIFIER":
     quit(fmt"Error: Expected IDENTIFIER found {cur.value}")
-  content.add(&"\nvar {cur.value} ")
-  tokens.delete(0)
-  expect_equal(tokens, content)
+  if tp.scope.hasKey(cur.value):
+    if tp.scope[cur.value] == false:
+      quit(fmt"Error: Cannot change immutable variable {cur.value}")
+    tp.content.add(&"\n{cur.value} ")
+  else:
+    if mutable:
+      tp.content.add(&"\nvar {cur.value} ")
+      tp.scope[cur.value] = mutable
+    else:
+      tp.content.add(&"\nlet {cur.value} ")
+      tp.scope[cur.value] = mutable
 
-proc expect_statement(tokens: var seq[Token], content: var string) =
+  tokens.delete(0)
+  expect_equal(tp, tokens)
+  expect_value(tp, tokens)
+
+proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
   var cur = tokens[0]
   if cur.kind == "IDENTIFIER":
-    content.add(&"\nvar {cur.value} ")
-    tokens.delete(0)
-    expect_equal(tokens, content)
+    expect_assignment(tp, tokens, false)
   elif cur.kind == "MUTABLE":
     tokens.delete(0)
-    expect_identifier(tokens, content)
+    expect_assignment(tp, tokens, true)
   elif cur.kind == "ECHO":
-    content.add("\necho ")
+    tp.content.add("\necho ")
     tokens.delete(0)
-    expect_value(tokens, content)
+    expect_value(tp, tokens)
   else:
     quit(fmt"Error: Expected identifer found {cur.value}")
 
-proc transpile(tokens: var seq[Token]): string =
-  var content = ""
+proc transpile(tp: var Transpiler, tokens: var seq[Token]): string =
   var found_end_of_file = false
   while not found_end_of_file:
     var newlines = remove_newlines(tokens)
@@ -74,9 +82,9 @@ proc transpile(tokens: var seq[Token]): string =
     if cur.kind == "EOF":
       found_end_of_file = true
       break
-    expect_statement(tokens, content)
+    expect_statement(tp, tokens)
 
-  content
+  tp.content
 
 # Target is either LLVM IR or Nim
 proc lower*(tokens: var seq[Token], target: string): string =
@@ -84,4 +92,8 @@ proc lower*(tokens: var seq[Token], target: string): string =
   if target == "llvm":
     return ""
   else:
-    return transpile(tokens)
+    var transpiler = Transpiler(
+      scope: initTable[string, bool](),
+      content: ""
+    )
+    return transpile(transpiler, tokens)

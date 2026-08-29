@@ -9,3 +9,4 @@ fi
 nim c ../bn.nim
 ../bn c ../fun/greeting.bn
 ../bn c ../fun/ascii_art_expressions.bn
+../bn c ../fun/future.bn

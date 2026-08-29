@@ -1,0 +1,11 @@
+
+# mut z = 3
+# mut f = 4
+# mut hello = "Yello"
+# mut world = "world!"
+# hello = "H" + hello[1..]
+# mut greeting = hello + " " + world
+
+greeting = "TEST"
+greeting = "HMM"
+echo greeting

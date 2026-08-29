@@ -1,9 +1,2 @@
 
-# mut z = 3
-# mut f = 4
-# mut hello = "Yello"
-# mut world = "world!"
-# hello = "H" + hello[1..]
-# mut greeting = hello + " " + world
-
 echo "\nHello world!"
