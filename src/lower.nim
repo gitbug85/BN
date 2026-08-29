@@ -1,5 +1,12 @@
 import tokens
 import std/strformat
+import tables
+
+type
+  Transpiler = object
+    scope: Table[string, string] # Identifier to mutability
+    content: string
+
 
 proc remove_newlines(tokens: var seq[Token]): int =
   var newlines_removed = false
@@ -59,9 +66,8 @@ proc expect_statement(tokens: var seq[Token], content: var string) =
   else:
     quit(fmt"Error: Expected identifer found {cur.value}")
 
-proc transpile*(tokens: var seq[Token]): string =
+proc transpile(tokens: var seq[Token]): string =
   var content = ""
-
   var found_end_of_file = false
   while not found_end_of_file:
     var newlines = remove_newlines(tokens)
@@ -72,3 +78,11 @@ proc transpile*(tokens: var seq[Token]): string =
     expect_statement(tokens, content)
 
   content
+
+# Target is either LLVM IR or Nim
+proc lower*(tokens: var seq[Token], target: string): string =
+  # Either transpile to nim or generate LLVM IR (codegen)
+  if target == "llvm":
+    return ""
+  else:
+    return transpile(tokens)

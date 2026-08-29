@@ -1,10 +1,11 @@
 # TODO
-- Make reassignment take into account mutability
+- Make reassignment take into account mutability -> Scope!
 
 # Stratagy
 
 I find both Nim and Rust to have features I like but some downsides.
 I will start from very basic syntax and the build the language from there.
+The language will at first transpile to Nim then compile to binary but eventually I will switch to immediate LLVM compilation.
 
 Things I like from different programming languages that I want to implement:
 - Nim: Small join paths operator

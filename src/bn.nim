@@ -1,7 +1,7 @@
 import std/parseopt
 import tokens
 import std/os
-import transpilation
+import lower
 import std/strformat
 import osproc
 
@@ -42,7 +42,7 @@ if command == "c":
   var tokens: seq[Token] = tokenize(path)
   for tok in tokens:
     echo tok.kind
-  var content = transpile(tokens)
+  var content = lower(tokens, "nim")
   echo content
   let parent = parentDir(path)
   let (_, stem, _) = splitFile(path)
