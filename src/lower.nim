@@ -7,7 +7,6 @@ type
     scope: Table[string, string] # Identifier to mutability
     content: string
 
-
 proc remove_newlines(tokens: var seq[Token]): int =
   var newlines_removed = false
   var count = 0;
@@ -81,7 +80,7 @@ proc transpile(tokens: var seq[Token]): string =
 
 # Target is either LLVM IR or Nim
 proc lower*(tokens: var seq[Token], target: string): string =
-  # Either transpile to nim or generate LLVM IR (codegen)
+  # Either transpile to Nim or generate LLVM IR (codegen)
   if target == "llvm":
     return ""
   else:

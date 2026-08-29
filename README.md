@@ -1,7 +1,7 @@
 # Borrow Nim
 
 Nim and Rust inspired language that aims to implement a borrow checker.\
-Compile bn.nim for a compiler executable.
+Run build.sh for the compiled bn binary.
 
 This is what it can currently do.
 ```

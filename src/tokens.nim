@@ -1,4 +1,5 @@
 import std/strutils
+import re
 
 type
   Token* = object
@@ -30,7 +31,8 @@ proc tokenize*(path: string): seq[Token] =
 
   for line in allLines.mitems:
     line = removeAfter(line, '#')
-    var lexemes: seq[string] = line.split(separators)
+    var lexemes = line.findAll(re""""(?:\\.|[^"\\])*"|\S+""")
+    echo lexemes
 
     for lexeme in lexemes:
       if lexeme.len == 0:

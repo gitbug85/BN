@@ -5,5 +5,5 @@
 # mut world = "world!"
 # hello = "H" + hello[1..]
 # mut greeting = hello + " " + world
-mut greeting = "HelloWorld"
-echo greeting
+
+echo "\nHello world!"
