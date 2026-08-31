@@ -2,7 +2,7 @@
 
 Nim and Rust inspired language.\
 I "borrowed" Nim to make this language but I will also try to add a borrow checker.\
-Run build_fun.sh to compile the files in fun.
+Compile bn.nim for the compiler executable. Then run a command through it like ```./bn c ./example.bn```
 
 This is what it can currently do.
 ```

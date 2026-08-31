@@ -17,4 +17,4 @@ Things I like from different programming languages that I want to implement:
 
 Unique things I want to implement:
 - Small operators
-- Left to right operator precidence
+- Left Operand Wins: Whatever operand type is on the left is the output of the operation
