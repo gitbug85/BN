@@ -19,3 +19,14 @@ Things I like from different programming languages that I want to implement:
 Unique things I want to implement:
 - Small operators
 - Left Operand Wins: Whatever operand type is on the left is the output of the operation
+
+|               | **Fixed Type** | **Flexible Type** |
+| ------------- | -------------- | ----------------- |
+| **Immutable** | `x = 5`        | `flex x = 5`      |
+| **Mutable**   | `mut x = 5`    | `mutflex x = 5`   |
+
+prot: immutable & inflexable reference
+ref: reference
+
+use -> runtime
+imp -> everything else

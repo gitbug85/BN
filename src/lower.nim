@@ -25,6 +25,7 @@ proc expect_value(tp: var Transpiler, tokens: var seq[Token]) =
   if cur.kind == "NUMBER":
     tp.content.add(fmt"{cur.value}")
   elif cur.kind == "STRING":
+    insert(tp.content, ": cstring ", tp.content.len - 3)
     tp.content.add(&"{cur.value}")
   elif cur.kind == "IDENTIFIER":
     tp.content.add(cur.value)
@@ -73,14 +74,23 @@ proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
     tokens.delete(0)
     expect_value(tp, tokens)
   elif cur.kind == "USE":
-    tp.content.add("\n{.passL: \"")
-    tokens.delete(0)
-    cur = tokens[0]
-    var path = findExe("bn")
-    var parent = parentDir(path)
-    var standard_library = parent / "runtime" / cur.value & ".a\""
-    tp.content.add(standard_library & ".}")
-    tokens.delete(0)
+      tokens.delete(0)
+      cur = tokens[0]
+
+      var path = findExe("bn")
+      var parent = parentDir(path)
+      var standard_library = parent / "runtime" / (cur.value & ".a")
+
+      tp.content.add("{.passL: \"" & standard_library & "\".}\n")
+
+      if cur.value == "math":
+          tp.content.add("""
+proc rs_add(a: int32, b: int32): int32 {.importc.}
+proc rs_sub(a: int32, b: int32): int32 {.importc.}
+proc rs_mult(a: int32, b: int32): int32 {.importc.}
+proc rs_int_div(a: int32, b: int32): int32 {.importc.}
+""")
+      tokens.delete(0)
   else:
     quit(fmt"Error: Expected identifer found {cur.value}")
 
