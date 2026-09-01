@@ -47,6 +47,8 @@ proc tokenize*(path: string): seq[Token] =
         result.add(Token(kind: "ECHO", value: lexeme))
       of "mut":
         result.add(Token(kind: "MUTABLE", value: lexeme))
+      of "use":
+        result.add(Token(kind: "USE", value: lexeme))
       else:
         if isNumber(lexeme):
           result.add(Token(kind: "NUMBER", value: lexeme))

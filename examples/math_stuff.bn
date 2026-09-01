@@ -1,0 +1,3 @@
+use stdmath
+
+mut x = rs_add(3,5)

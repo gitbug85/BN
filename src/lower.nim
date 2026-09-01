@@ -1,6 +1,7 @@
 import tokens
 import std/strformat
 import tables
+import std/os
 
 type
   Transpiler = object
@@ -71,6 +72,15 @@ proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
     tp.content.add("\necho ")
     tokens.delete(0)
     expect_value(tp, tokens)
+  elif cur.kind == "USE":
+    tp.content.add("\n{.passL: \"")
+    tokens.delete(0)
+    cur = tokens[0]
+    var path = findExe("bn")
+    var parent = parentDir(path)
+    var standard_library = parent / "runtime" / cur.value & ".a\""
+    tp.content.add(standard_library & ".}")
+    tokens.delete(0)
   else:
     quit(fmt"Error: Expected identifer found {cur.value}")
 

@@ -1,5 +1,6 @@
 # TODO
-- Make reassignment take into account mutability -> Scope!
+- X Make reassignment take into account mutability -> Scope!
+- Add standard library
 
 # Stratagy
 
