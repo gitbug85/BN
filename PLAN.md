@@ -20,6 +20,8 @@ Unique things I want to implement:
 - Small operators
 - Left Operand Wins: Whatever operand type is on the left is the output of the operation
 
+Flexible Type: Type can change bits ie i32 -> i64
+
 |               | **Fixed Type** | **Flexible Type** |
 | ------------- | -------------- | ----------------- |
 | **Immutable** | `x = 5`        | `flex x = 5`      |
