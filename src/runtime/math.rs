@@ -1,3 +1,6 @@
+use std::ffi::CStr;
+use std::os::raw::c_char;
+
 #[no_mangle]
 pub extern "C" fn rs_add(a: i32, b: i32) -> i32 {
     a + b

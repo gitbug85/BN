@@ -1,11 +1,3 @@
-# Borrow Nim
-
-Nim and Rust inspired language.\
-Install Nim and rustc to use this. Then run ```build.sh```.
-You now should be able to compile .bn files.
-
-This is what it can currently do.
-```
 # Importing standard libraries
 use math
 use cli
@@ -29,5 +21,3 @@ if rs_str_eq(operator,plus):
 
 if rs_str_eq(operator,minus):
     echo rs_i32_to_str(rs_sub(left_operand,right_operand))
-
-```

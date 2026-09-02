@@ -24,17 +24,6 @@ pub extern "C" fn rs_arg(index: usize) -> *mut c_char {
 }
 
 #[no_mangle]
-pub extern "C" fn rs_cli_string_free(s: *mut c_char) {
-    if s.is_null() {
-        return;
-    }
-
-    unsafe {
-        drop(CString::from_raw(s));
-    }
-}
-
-#[no_mangle]
 pub extern "C" fn rs_path_exists(path: *const c_char) -> bool {
     if path.is_null() {
         return false;

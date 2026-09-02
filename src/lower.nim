@@ -8,12 +8,17 @@ type
     scope: Table[string, bool] # Identifier to mutability
     content: string
 
-proc remove_newlines(tokens: var seq[Token]): int =
+proc remove_newlines(tp: var Transpiler, tokens: var seq[Token]): int =
   var newlines_removed = false
   var count = 0;
   while not newlines_removed:
     var cur = tokens[0]
     if cur.kind == "NEWLINE":
+      tp.content.add(cur.value)
+      count += 1
+      tokens.delete(0)
+    elif cur.kind == "TAB":
+      tp.content.add(cur.value)
       count += 1
       tokens.delete(0)
     else:
@@ -25,8 +30,7 @@ proc expect_value(tp: var Transpiler, tokens: var seq[Token]) =
   if cur.kind == "NUMBER":
     tp.content.add(fmt"{cur.value}")
   elif cur.kind == "STRING":
-    insert(tp.content, ": cstring ", tp.content.len - 3)
-    tp.content.add(&"{cur.value}")
+    tp.content.add(&"cstring({cur.value})")
   elif cur.kind == "IDENTIFIER":
     tp.content.add(cur.value)
     tokens.delete(0)
@@ -49,13 +53,13 @@ proc expect_assignment(tp: var Transpiler, tokens: var seq[Token], mutable: bool
   if tp.scope.hasKey(cur.value):
     if tp.scope[cur.value] == false:
       quit(fmt"Error: Cannot change immutable variable {cur.value}")
-    tp.content.add(&"\n{cur.value} ")
+    tp.content.add(&"{cur.value} ")
   else:
     if mutable:
-      tp.content.add(&"\nvar {cur.value} ")
+      tp.content.add(&"var {cur.value} ")
       tp.scope[cur.value] = mutable
     else:
-      tp.content.add(&"\nlet {cur.value} ")
+      tp.content.add(&"let {cur.value} ")
       tp.scope[cur.value] = mutable
 
   tokens.delete(0)
@@ -70,9 +74,21 @@ proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
     tokens.delete(0)
     expect_assignment(tp, tokens, true)
   elif cur.kind == "ECHO":
-    tp.content.add("\necho ")
+    tp.content.add("echo ")
     tokens.delete(0)
     expect_value(tp, tokens)
+  elif cur.kind == "IF":
+    tp.content.add("if ")
+    tokens.delete(0)
+    cur = tokens[0]
+    if cur.kind == "IDENTIFIER":
+      tp.content.add(cur.value)
+      tokens.delete(0)
+      cur = tokens[0]
+      # if cur.kind != "COLON":
+      #   quit("Error: Expected colon at end of if statement")
+    else:
+      quit("Error: Expected identifier after if")
   elif cur.kind == "USE":
       tokens.delete(0)
       cur = tokens[0]
@@ -84,11 +100,35 @@ proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
       tp.content.add("{.passL: \"" & standard_library & "\".}\n")
 
       if cur.value == "math":
-          tp.content.add("""
+        tp.content.add("""
 proc rs_add(a: int32, b: int32): int32 {.importc.}
 proc rs_sub(a: int32, b: int32): int32 {.importc.}
 proc rs_mult(a: int32, b: int32): int32 {.importc.}
 proc rs_int_div(a: int32, b: int32): int32 {.importc.}
+proc rs_str_to_i32(s: cstring): int32 {.importc.}
+""")
+      elif cur.value == "cli":
+        tp.content.add("""
+proc rs_arg_count(): csize_t {.importc.}
+proc rs_arg(index: csize_t): cstring {.importc.}
+
+proc rs_path_exists(path: cstring): bool {.importc.}
+proc rs_path_is_file(path: cstring): bool {.importc.}
+proc rs_path_is_dir(path: cstring): bool {.importc.}
+
+proc rs_path_join(a: cstring, b: cstring): cstring {.importc.}
+proc rs_path_parent(path: cstring): cstring {.importc.}
+proc rs_path_filename(path: cstring): cstring {.importc.}
+proc rs_path_extension(path: cstring): cstring {.importc.}
+""")
+      elif cur.value == "string":
+        tp.content.add("""
+proc rs_str_len(s: cstring): csize_t {.importc.}
+proc rs_str_eq(a: cstring, b: cstring): bool {.importc.}
+proc rs_str_dup(s: cstring): cstring {.importc.}
+proc rs_str_free(s: cstring) {.importc.}
+proc rs_str_concat(a: cstring, b: cstring): cstring {.importc.}
+proc rs_i32_to_str(value: int32): cstring {.importc.}
 """)
       tokens.delete(0)
   else:
@@ -97,7 +137,7 @@ proc rs_int_div(a: int32, b: int32): int32 {.importc.}
 proc transpile(tp: var Transpiler, tokens: var seq[Token]): string =
   var found_end_of_file = false
   while not found_end_of_file:
-    var newlines = remove_newlines(tokens)
+    var newlines = remove_newlines(tp, tokens)
     let cur = tokens[0]
     if cur.kind == "EOF":
       found_end_of_file = true
