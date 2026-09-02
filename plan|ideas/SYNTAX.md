@@ -1,8 +1,4 @@
-# TODO
-- X Make reassignment take into account mutability -> Scope!
-- Add standard library
-
-# Stratagy
+# Broad
 
 I find both Nim and Rust to have features I like but some downsides.
 I will start from very basic syntax and the build the language from there.
@@ -20,6 +16,7 @@ Unique things I want to implement:
 - Small operators
 - Left Operand Wins: Whatever operand type is on the left is the output of the operation
 
+# Specific
 Flexible Type: Type can change bits ie i32 -> i64
 
 |               | **Fixed Type** | **Flexible Type** |
@@ -32,3 +29,9 @@ ref: reference
 
 use -> runtime
 imp -> everything else
+
+mut hello = "Yello"
+mut world = "world!"
+hello = "H" + hello[1..]
+mut greeting = hello + " " + world
+echo greeting
