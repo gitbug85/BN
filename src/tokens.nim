@@ -59,7 +59,7 @@ proc tokenize*(path: string): seq[Token] =
       of "use":
         result.add(Token(kind: "USE", value: lexeme))
       of "imp":
-        result.add(Token(kind: "IMPORT"), value: lexeme)
+        result.add(Token(kind: "IMPORT", value: lexeme))
       of "if":
         result.add(Token(kind: "IF", value: lexeme))
       of "elif":
