@@ -8,18 +8,19 @@ type
     scope: Table[string, bool] # Identifier to mutability
     content: string
 
-proc remove_newlines(tp: var Transpiler, tokens: var seq[Token]): int =
+proc emit_whitespace(tp: var Transpiler, tokens: var seq[Token]): int =
   var newlines_removed = false
   var count = 0;
   while not newlines_removed:
     var cur = tokens[0]
     if cur.kind == "NEWLINE":
       tp.content.add(cur.value)
+      echo &"\"{tp.content}\""
+      echo "-----------------------------------------------"
       count += 1
       tokens.delete(0)
     elif cur.kind == "TAB":
       tp.content.add(cur.value)
-      count += 1
       tokens.delete(0)
     else:
       newlines_removed = true
@@ -33,7 +34,6 @@ proc expect_value(tp: var Transpiler, tokens: var seq[Token]) =
     tp.content.add(&"cstring({cur.value})")
   elif cur.kind == "IDENTIFIER":
     tp.content.add(cur.value)
-    tokens.delete(0)
   else:
     quit(fmt"Error: Expected value found {cur.value}")
 
@@ -137,12 +137,13 @@ proc rs_i32_to_str(value: int32): cstring {.importc.}
 proc transpile(tp: var Transpiler, tokens: var seq[Token]): string =
   var found_end_of_file = false
   while not found_end_of_file:
-    var newlines = remove_newlines(tp, tokens)
+    var newlines = emit_whitespace(tp, tokens)
     let cur = tokens[0]
     if cur.kind == "EOF":
       found_end_of_file = true
       break
     expect_statement(tp, tokens)
+    echo "AFTER STATEMENT: ", tokens[0].kind
 
   tp.content
 
