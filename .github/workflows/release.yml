@@ -33,9 +33,7 @@ jobs:
 
       # Run build script
       - name: Run build script
-        run: |
-          chmod +x ./src/scripts/build.sh
-          ./src/scripts/build.sh
+        run: bash ./src/scripts/build.sh
 
       # Collect extensionless files and .a files
       - name: Prepare release
