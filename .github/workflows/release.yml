@@ -53,7 +53,11 @@ jobs:
 
       - name: Create compressed Linux archive
         run: |
-          tar -czf "bn-${GITHUB_REF_NAME}-linux.tar.gz" -C dist .
+          tar -czf "bn-${GITHUB_REF_NAME}-linux.tar.gz" \
+            --exclude=".git" \
+            --exclude=".github" \
+            --exclude="bn-${GITHUB_REF_NAME}-linux.tar.gz" \
+            .
 
       - name: Create GitHub Release
         env:
