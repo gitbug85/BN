@@ -16,14 +16,10 @@ left_operand = rs_str_to_i32(rs_arg(1))
 operator = rs_arg(2)
 right_operand = rs_str_to_i32(rs_arg(3))
 
-# Set operators
-plus = "+"
-minus = "-"
-
 # Calculate and print
-if rs_str_eq(operator,plus):
+if rs_str_eq(operator,"+"):
     echo rs_i32_to_str(rs_add(left_operand,right_operand))
-if rs_str_eq(operator,minus):
+if rs_str_eq(operator,"-"):
     echo rs_i32_to_str(rs_sub(left_operand,right_operand))
 
 ```

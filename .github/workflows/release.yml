@@ -1,0 +1,71 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Nim
+      - name: Setup Nim
+        uses: iffy/install-nim@v5
+        with:
+          version: stable
+
+      # Install Rust/rustc/cargo
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      # Compile Nim
+      - name: Compile bn.nim
+        run: |
+          nim c ./src/bn.nim
+
+      # Run build script
+      - name: Run build script
+        run: |
+          chmod +x ./src/scripts/build.sh
+          ./src/scripts/build.sh
+
+      # Collect extensionless files and .a files
+      - name: Prepare release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf release
+          mkdir -p release
+
+          find . -maxdepth 1 -type f \
+            \( ! -name '*.*' -o -name '*.a' \) \
+            -exec cp {} release/ \;
+
+          echo "Release contents:"
+          find release -maxdepth 1 -type f -printf '%f\n' | sort
+
+      # Zip release
+      - name: Create release ZIP
+        run: |
+          cd release
+          zip -r "../bn-${GITHUB_REF_NAME}.zip" .
+
+      # Create GitHub Release
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "${GITHUB_REF_NAME}" \
+            "bn-${GITHUB_REF_NAME}.zip" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes

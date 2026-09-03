@@ -24,8 +24,8 @@ Flexible Type: Type can change bits ie i32 -> i64
 | **Immutable** | `x = 5`        | `flex x = 5`      |
 | **Mutable**   | `mut x = 5`    | `mutflex x = 5`   |
 
-prot: immutable & inflexable reference
-ref: reference
+&prot: immutable & inflexable reference
+&ref: reference
 
 use -> runtime
 imp -> everything else
@@ -35,3 +35,48 @@ mut world = "world!"
 hello = "H" + hello[1..]
 mut greeting = hello + " " + world
 echo greeting
+
+\# Denotes number
+| Name | Operator |
+|---|---|
+| Addition |+|
+| Subtraction |-|
+| Multiplication |*|
+| Division |/|
+| Modulo |%|
+| Exponentiation |^|
+| Equal To |==|
+| Not Equal To |!=|
+| Greater Than |>|
+| Greater Than or Equal To |>=|
+| Less Than |<|
+| Less Than or Equal To |<=|
+| Logical AND |&|
+| Logical OR |\||
+| Logical NOT |!|
+| Bitwise AND |&|
+| Bitwise OR |\||
+| Bitwise XOR |\|\||
+| Bitwise NOT |!|
+| Left Shift |<<|
+| Right Shift |>>|
+| Assignment |=|
+| Addition Assignment |+=|
+| Subtraction Assignment |-=|
+| Multiplication Assignment |*=|
+| Division Assignment |/=|
+| Modulo Assignment |%=|
+| Increment |++|
+| Decrement |--|
+| Push |<<|
+| Pop |>>|
+| Range |\[#..#\]|
+| Membership |\[@\]|
+| Index |\[#\]|
+| Index Assignment |\[#\] =|
+| Dereference |@|
+| Address Of |&|
+
+Path -> \`~/bla/bla/bla\`\
+String -> "bla bla bla"\
+Character -> 'b'

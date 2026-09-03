@@ -131,6 +131,10 @@ proc rs_str_concat(a: cstring, b: cstring): cstring {.importc.}
 proc rs_i32_to_str(value: int32): cstring {.importc.}
 """)
       tokens.delete(0)
+  elif cur.kind == "IMPORT":
+    tokens.delete(0)
+    cur = tokens[0]
+    tp.content.add(&"import {cur.value}")
   else:
     quit(fmt"Error: Expected identifer found {cur.value}")
 
