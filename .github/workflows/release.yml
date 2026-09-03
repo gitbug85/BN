@@ -53,10 +53,10 @@ jobs:
 
       - name: Create compressed Linux archive
         run: |
-          tar -czf "bn-${GITHUB_REF_NAME}-linux.tar.gz" \
+          tar -czf "/tmp/bn-${GITHUB_REF_NAME}-linux.tar.gz" \
             --exclude=".git" \
             --exclude=".github" \
-            --exclude="bn-${GITHUB_REF_NAME}-linux.tar.gz" \
+            --exclude="*.zip" \
             .
 
       - name: Create GitHub Release
@@ -65,6 +65,6 @@ jobs:
         run: |
           gh release create \
             "${GITHUB_REF_NAME}" \
-            "bn-${GITHUB_REF_NAME}-linux.tar.gz" \
+            "/tmp/bn-${GITHUB_REF_NAME}-linux.tar.gz" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes
