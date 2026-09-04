@@ -1,10 +1,10 @@
 # Borrow Nim
 
 Nim and Rust inspired language.\
-Install Nim and rustc to use this. Then run ```build.sh```.
+Install the latest release. Put the folder where you want it. Then run ```install.sh```.
 You now should be able to compile .bn files.
 
-This is what it can currently do.
+Example:
 ```
 # Importing standard libraries
 use math
