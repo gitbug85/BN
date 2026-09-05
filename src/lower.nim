@@ -129,6 +129,11 @@ proc rs_str_free(s: cstring) {.importc.}
 proc rs_str_concat(a: cstring, b: cstring): cstring {.importc.}
 proc rs_i32_to_str(value: int32): cstring {.importc.}
 """)
+      elif cur.value == "io":
+        tp.content.add("""
+proc nim_echo(s: cstring): void {.cdecl, importc.}
+proc nim_say(s: cstring): void {.cdecl, importc.}
+""")
       tokens.delete(0)
   elif cur.kind == "IMPORT":
     tokens.delete(0)

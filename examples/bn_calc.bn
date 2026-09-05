@@ -2,6 +2,7 @@
 use math
 use cli
 use string
+use io
 imp multiply
 
 # Get arguments

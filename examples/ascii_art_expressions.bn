@@ -1,3 +1,5 @@
+use io
+
 say "Petrified"
 say "(0-0)"
 say "Happy"

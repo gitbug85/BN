@@ -2,8 +2,8 @@ nimcache/
 nimblecache/
 htmldocs/
 src/bn
-src/examples/greeting
-src/examples/ascii_art_expressions
-src/examples/bn_calc
+examples/greeting
+examples/ascii_art_expressions
+examples/bn_calc
 *.o
 *.a
