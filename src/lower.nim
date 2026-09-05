@@ -72,7 +72,7 @@ proc expect_statement(tp: var Transpiler, tokens: var seq[Token]) =
   elif cur.kind == "MUTABLE":
     tokens.delete(0)
     expect_assignment(tp, tokens, true)
-  elif cur.kind == "ECHO":
+  elif cur.kind == "SAY":
     tp.content.add("echo ")
     tokens.delete(0)
     expect_value(tp, tokens)
