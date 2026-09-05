@@ -15,8 +15,6 @@ proc emit_whitespace(tp: var Transpiler, tokens: var seq[Token]): int =
     var cur = tokens[0]
     if cur.kind == "NEWLINE":
       tp.content.add(cur.value)
-      echo &"\"{tp.content}\""
-      echo "-----------------------------------------------"
       count += 1
       tokens.delete(0)
     elif cur.kind == "TAB":
@@ -35,21 +33,22 @@ proc expect_value(tp: var Transpiler, tokens: var seq[Token]) =
   elif cur.kind == "IDENTIFIER":
     tp.content.add(cur.value)
   else:
-    quit(fmt"Error: Expected value found {cur.value}")
+    quit(fmt"Error: Expected value found {cur.kind}")
 
   tokens.delete(0)
 
 proc expect_equal(tp: var Transpiler, tokens: var seq[Token]) =
   var cur = tokens[0]
   if cur.kind != "EQUAL":
-    quit(fmt"Error: Expected EQUAL found {cur.value}")
+    echo tokens
+    quit(fmt"Error: Expected EQUAL found {cur.kind}")
   tp.content.add(fmt"= ")
   tokens.delete(0)
 
 proc expect_assignment(tp: var Transpiler, tokens: var seq[Token], mutable: bool) =
   var cur = tokens[0]
   if cur.kind != "IDENTIFIER":
-    quit(fmt"Error: Expected IDENTIFIER found {cur.value}")
+    quit(fmt"Error: Expected IDENTIFIER found {cur.kind}")
   if tp.scope.hasKey(cur.value):
     if tp.scope[cur.value] == false:
       quit(fmt"Error: Cannot change immutable variable {cur.value}")
@@ -135,8 +134,9 @@ proc rs_i32_to_str(value: int32): cstring {.importc.}
     tokens.delete(0)
     cur = tokens[0]
     tp.content.add(&"import {cur.value}")
+    tokens.delete(0)
   else:
-    quit(fmt"Error: Expected identifer found {cur.value}")
+    quit(fmt"Error: Expected identifer found {cur.kind}")
 
 proc transpile(tp: var Transpiler, tokens: var seq[Token]): string =
   var found_end_of_file = false
@@ -147,7 +147,6 @@ proc transpile(tp: var Transpiler, tokens: var seq[Token]): string =
       found_end_of_file = true
       break
     expect_statement(tp, tokens)
-    echo "AFTER STATEMENT: ", tokens[0].kind
 
   tp.content
 
