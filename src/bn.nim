@@ -6,6 +6,7 @@ import std/strformat
 import osproc
 
 var p = initOptParser()
+let appDir = getAppDir()
 
 var command = ""
 var path = ""
@@ -38,6 +39,19 @@ if command == "c":
   let fileInfo = splitFile(path)
   if not (fileInfo.ext == ".bn"):
     quit "Incorrect file extension!"
+
+
+  let perlScript = getAppDir() / "lexer.pl"
+  let (pl_output, exitCode) = execCmdEx("perl " & quoteShell(perlScript) & " " & quoteShell(path))
+
+  # 4. Check the results
+  if exitCode == 0:
+    echo "Success! Perl Output:"
+    echo pl_output
+  else:
+    echo "Error running Perl script. Exit code: ", exitCode
+    echo pl_output
+
 
   var tokens: seq[Token] = tokenize(path)
   for tok in tokens:
