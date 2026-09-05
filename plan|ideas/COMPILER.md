@@ -2,8 +2,8 @@
 
 # Model (plan)
 bn.nim (controller)
-**lexer.nim** -> lexemes -> 
-1. (Lexeme) Lexeme object (ln, col)
+**lexer.pl** -> lexemes (json)
+1. (Lexeme) Lexeme object (col, ln)
 2. (string) Seperate by line
 3. (string) Ignore after #
 4. (string) Go character by character and reset current_segment if character is " " while making list
