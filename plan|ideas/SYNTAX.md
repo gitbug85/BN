@@ -77,6 +77,5 @@ echo greeting
 | Dereference |@|
 | Address Of |&|
 
-Path -> \`~/bla/bla/bla\`\
-String -> "bla bla bla"\
-Character -> 'b'
+Path -> '~/path'
+String -> "string"

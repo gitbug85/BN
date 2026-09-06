@@ -30,7 +30,7 @@ sub print_segments {
     my @segs = @_; 
     for $i (0 .. $#segs) {
         $seg = $segs[$i];
-        print "\"" . $seg->val . "\"";
+        print "\"" . $seg->val . "\" ";
     }
 }
 
@@ -66,72 +66,72 @@ sub lex {
         $current_fragment = "";
     }
 
-    print_segments(@fragments);
+    our @new_fragments;
 
-#     our @new_fragments;
+    # Make more fragments using regex
+    for my $i (0 .. $#fragments) {
+        my $fragment = $fragments[$i];
+        my $string = $fragment->val;
+        my $ln = $fragment->ln;
+        my $col = $fragment->col;
+        my $regex = qr/([=\+\-\*\/"\(\)\\,#])/;
+        my @strings = split($regex, $string);
+        @strings = grep { length($_) > 0 } @strings;
+        for my $str (@strings) {
+            push @new_fragments, Segment->new(
+                val => $str, 
+                ln  => $ln, 
+                col => $col
+            );
+        }
+    }
 
-#     # Make more fragments using regex
-#     for my $i (0 .. $#fragments) {
-#         my $fragment = $fragments[$i];
-#         my $string = $fragment->val;
-#         my $ln = $fragment->ln;
-#         my $col = $fragment->col;
-#         my $regex = qr/([#=+\-*\/%^!><&|\[\].@"`'_])/;
-#         my @strings = split($regex, $string);
-#         @strings = grep { length($_) > 0 } @strings;
-#         for my $str (@strings) {
-#             push @new_fragments, Segment->new(
-#                 val => $str, 
-#                 ln  => $ln, 
-#                 col => $col
-#             );
-#         }
-#         splice @fragments, $i, 1, @new_fragments;
-#     }
+    @fragments = @new_fragments;
 
-#     $fragments = $new_fragments;
+=pod
+    Join fragments together to make lexemes:
+     - Strings ""
+     - Paths ''
+     - Regex ``
+     Everything else is one to one.
+=cut
 
-# =pod
-#     Join fragments together to make lexemes:
-#      - Strings ""
-#      - Paths ``
-#      Everything else is one to one.
-# =cut
+    my $lexing_status = NOT_JOINING;
+    my @lexemes = [];
+    my $current_lexeme;
+    my $previous_backslash = 0;
 
-#     my $lexing_status = NOT_JOINING;
-#     my @lexemes = [];
-#     my $current_lexeme;
-#     my $previous_backslash = 0;
+    for my $i (0 .. $#fragments) {
+        my $fragment = $fragments[$i];
+        my $string = $fragment->val;
 
-#     for my $i (9 .. $#fragments) {
-#         my $fragment = $fragments[$i];
-#         my $string = $fragment->val;
+        if ($string == "\"") {
+            $current_lexeme = Segment->new(col => $fragment->col, ln => $fragment->ln, val => $string);
 
-#         if ($string == "\"") {
-#             $current_lexeme = Segment->new(col => $fragment->col, ln => $fragment->ln, val => $string);
+            if ($lexing_status == NOT_JOINING) {
+                $lexing_status = JOINING_STRING;
+            } elsif ($lexing_status == JOINING_STRING) {
+                if (previous_backslash == 0) {
+                    push @lexemes, Segment->new(col => $current_lexeme->col, ln => $current_lexeme->ln, val => $current_lexeme->val);
+                    $current_lexeme = "";
+                    $lexing_status = NOT_JOINING;
+                } else {
+                    $current_lexeme->val .= $string;
+                    $previous_backslash = 0;
+                }
+            }
+        } elsif ($string == "\\") {
+            $previous_backslash = 1;
+        }
+    }
 
-#             if ($lexing_status == NOT_JOINING) {
-#                 $lexing_status = JOINING_STRING;
-#             } elsif ($lexing_status == JOINING_STRING) {
-#                 if (previous_backslash == 0) {
-#                     push @lexemes, Segment->new(col => $current_lexeme->col, ln => $current_lexeme->ln, val => $current_lexeme->val);
-#                     $current_lexeme = "";
-#                     $lexing_status = NOT_JOINING;
-#                 } else {
-#                     $current_lexeme->val .= $string;
-#                     $previous_backslash = 0;
-#                 }
-#             }
-#         } elsif ($string == "\\") {
-#             $previous_backslash = 1;
-#         }
-#     }
+    print_segments(@lexemes);
 
-#     # Convert and return JSON string
-#     my $json_encoder = JSON::PP->new->convert_blessed(1);
-#     my $json_string  = $json_encoder->encode(\@lexemes);
+    # # Convert and return JSON string
+    # my $json_encoder = JSON::PP->new->convert_blessed(1);
+    # my $json_string  = $json_encoder->encode(\@lexemes);
 
-#     print $json_string, "\n";
+    # print $json_string, "\n";
     print '';
 }
 
