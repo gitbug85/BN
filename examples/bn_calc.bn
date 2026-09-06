@@ -3,6 +3,8 @@ use math
 use cli
 use string
 use io
+
+# Import Nim module
 imp multiply
 
 # Get arguments

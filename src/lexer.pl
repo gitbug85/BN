@@ -3,9 +3,21 @@ use JSON::PP;
 no warnings 'experimental::class';
 
 class Segment {
-    field $col :param;
-    field $ln  :param;
     field $val :param;
+    field $col :param;
+    field $ln :param;
+
+    method val { return $val; }
+    method col { return $col; }
+    method ln  { return $ln;  }
+
+    method TO_JSON {
+        return {
+            val => $val,
+            col => $col,
+            ln  => $ln,
+        };
+    }
 }
 
 use constant {
@@ -14,14 +26,9 @@ use constant {
     NOT_JOINING => 2,
 };
 
-sub TO_JSON {
-    my $self = shift;
-    return { %$self };
-}
-
 sub lex {
     my $filename = shift;
-    my @fragments;
+    our @fragments;
     
     open(my $fh, '<:encoding(UTF-8)', $filename) 
         or die "Could not open file '$filename': $!";
@@ -49,6 +56,29 @@ sub lex {
         push @fragments, Segment->new(col => 0, ln => $., val => $line);
     }
 
+    our @new_fragments;
+
+    # Make more fragments using regex
+    for my $i (0 .. $#fragments) {
+        my $fragment = $fragments[$i];
+        my $string = $fragment->val;
+        my $ln = $fragment->ln;
+        my $col = $fragment->col;
+        my $regex = qr/([#=+\-*\/%^!><&|\[\].@"`'_])/;
+        my @strings = split($regex, $string);
+        @strings = grep { length($_) > 0 } @strings;
+        for my $str (@strings) {
+            push @new_fragments, Segment->new(
+                val => $str, 
+                ln  => $ln, 
+                col => $col
+            );
+        }
+        splice @fragments, $i, 1, @new_fragments;
+    }
+
+    $fragments = $new_fragments;
+
 =pod
     Join fragments together to make lexemes:
      - Strings ""
@@ -57,14 +87,37 @@ sub lex {
 =cut
 
     my $lexing_status = NOT_JOINING;
-    my @lexemes;
+    my @lexemes = [];
+    my $current_lexeme;
+    my $previous_backslash = 0;
 
-    # Add code here for making lexemes
+    for my $i (9 .. $#fragments) {
+        my $fragment = $fragments[$i];
+        my $string = $fragment->val;
 
-    # Convert to json and return json string
-    my @plain_fragments = map { { %$_ } } @fragments; # Use fragments for now but switch to lexemes
-    my $json_encoder = JSON::PP->new;
-    my $json_string  = $json_encoder->encode(\@plain_fragments);
+        if ($string == "\"") {
+            $current_lexeme = Segment->new(col => $fragment->col, ln => $fragment->ln, val => $string);
+
+            if ($lexing_status == NOT_JOINING) {
+                $lexing_status = JOINING_STRING;
+            } elsif ($lexing_status == JOINING_STRING) {
+                if (previous_backslash == 0) {
+                    push @lexemes, Segment->new(col => $current_lexeme->col, ln => $current_lexeme->ln, val => $current_lexeme->val);
+                    $current_lexeme = "";
+                    $lexing_status = NOT_JOINING;
+                } else {
+                    $current_lexeme->val .= $string;
+                    $previous_backslash = 0;
+                }
+            }
+        } elsif ($string == "\\") {
+            $previous_backslash = 1;
+        }
+    }
+
+    # Convert and return JSON string
+    my $json_encoder = JSON::PP->new->convert_blessed(1);
+    my $json_string  = $json_encoder->encode(\@lexemes);
 
     print $json_string, "\n";
 }

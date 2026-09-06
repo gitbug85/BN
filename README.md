@@ -10,8 +10,9 @@ Example:
 use math
 use cli
 use string
+use io
 
-# Import a Nim module
+# Import Nim module
 imp multiply
 
 # Get arguments
@@ -19,7 +20,9 @@ left_operand = rs_str_to_i32(rs_arg(1))
 operator = rs_arg(2)
 right_operand = rs_str_to_i32(rs_arg(3))
 
-# Calculate and say
+say operator
+
+# Calculate and print
 if rs_str_eq(operator,"+"):
     say rs_i32_to_str(rs_add(left_operand,right_operand))
 if rs_str_eq(operator,"-"):
